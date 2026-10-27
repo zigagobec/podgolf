@@ -203,11 +203,12 @@ export class SceneBuilder {
     // Tail: a chain of tapering segments.
     let p: Vec3 = [0, 0.3, -0.56];
     let yaw = Math.PI;
-    let pitch = r.charging ? -0.7 : -0.25;
+    let pitch = r.charging ? -0.35 : -0.25;
     const segs = 10;
     for (let i = 0; i < segs; i++) {
-      yaw += Math.sin(look.tailPhase + i * 0.55) * 0.12 + wiggle * 2;
-      pitch += r.charging ? 0.1 : 0.07;
+      // While charging the tail lashes side to side instead of curling up into the camera.
+      yaw += Math.sin(look.tailPhase + i * 0.55) * (r.charging ? 0.2 : 0.12) + wiggle * 2;
+      pitch += 0.07;
       const dir: Vec3 = [Math.sin(yaw) * Math.cos(pitch), -Math.sin(pitch), Math.cos(yaw) * Math.cos(pitch)];
       const len = 0.13;
       const rad = 0.055 - (0.035 * i) / segs;

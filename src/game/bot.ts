@@ -1,5 +1,5 @@
 import { forwardOf, v3, wrapAngle, type Vec3 } from '../math';
-import { BALL_R, CHARGE_TIME, HIT_MAX, HIT_MIN, NO_INPUT, SNOUT_FWD, SNOUT_R, type RatInput, type World } from './world';
+import { BALL_R, HIT_MAX, HIT_MIN, NO_INPUT, SNOUT_FWD, SNOUT_R, type RatInput, type World } from './world';
 
 interface Plan {
   dir: Vec3;
@@ -15,7 +15,7 @@ export class Bot {
   private stuck = 0;
   private detour = 0;
 
-  constructor(private me: number, private skill = 0.75) {}
+  constructor(private me: number, private skill = 0.6) {}
 
   reset(): void {
     this.plan = null;
@@ -90,9 +90,16 @@ export class Bot {
     const diff = wrapAngle(aimYaw - r.yaw);
     if (this.phase === 'turn') {
       if (Math.abs(diff) < 0.04) {
+        // A moment of "thinking" so the computer doesn't fire instantly.
+        if (this.timer > 0) return NO_INPUT;
+        if (this.timer > -0.2) {
+          this.timer = 0.3 + Math.random() * 0.6;
+          return NO_INPUT;
+        }
         this.phase = 'charge';
         return { throttle: 0, steer: 0, action: true };
       }
+      this.timer = -1;
       return { throttle: 0, steer: Math.max(-1, Math.min(1, -diff * 4)), action: false };
     }
     // Charging: release on the way up when the meter reaches the planned power.
@@ -119,13 +126,11 @@ export class Bot {
     const charges = [0.12, 0.22, 0.34, 0.47, 0.6, 0.75, 0.9];
     let best: Plan = { dir: forwardOf(direct), charge: 0.5, ballAt: v3.copy(b.pos) };
     let bestScore = Infinity;
-    const lead = CHARGE_TIME * 0.7;
     for (const a of angles) {
       const f = forwardOf(a);
       for (const c of charges) {
         const pw = HIT_MIN + (HIT_MAX - HIT_MIN) * c;
         const res = w.predictBall(this.me, b.pos, [f[0] * pw, 0.4 + c * 1.2, f[2] * pw], 4.5);
-        void lead;
         let score = res.sunk ? -100 + res.t : Math.hypot(res.pos[0] - hole.x, res.pos[2] - hole.z);
         if (!res.sunk && w.course.stickyAt(res.pos[0], res.pos[2])) score += 2;
         if (score < bestScore) {
@@ -135,7 +140,7 @@ export class Bot {
       }
     }
     // Human-ish error.
-    const err = (1 - this.skill) * 0.25;
+    const err = (1 - this.skill) * 0.7;
     const a = Math.atan2(best.dir[0], best.dir[2]) + (Math.random() - 0.5) * err;
     best.dir = forwardOf(a);
     best.charge = Math.max(0.06, Math.min(0.98, best.charge + (Math.random() - 0.5) * err * 0.6));

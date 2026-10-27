@@ -294,9 +294,12 @@ export class App {
         const col = linear(PLAYER_COLORS[r.id]);
         const snout = w.snoutOf(r);
         for (let k = 0; k < n; k++) {
-          const d = 0.55 + k * 0.42;
+          // Start past the ball so the chevrons aren't hidden behind it.
+          const d = 1.0 + k * 0.5;
           const on = k < lit;
-          P.now([snout[0] + f[0] * d, w.course.floorY(snout[0] + f[0] * d, snout[2] + f[2] * d) + 0.025, snout[2] + f[2] * d], 0.2, on ? v3.scale(col, 2.2) : [0.5, 0.5, 0.5], on ? 0.95 : 0.25, SHAPE.chevron, -r.yaw, true, on);
+          const x = snout[0] + f[0] * d;
+          const z = snout[2] + f[2] * d;
+          P.now([x, w.course.floorY(x, z) + 0.025, z], 0.26, on ? v3.scale(col, 2.6) : [0.6, 0.6, 0.6], on ? 1 : 0.35, SHAPE.chevron, -r.yaw, true, on);
         }
       }
       if (r.stun > 0) {

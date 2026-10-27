@@ -33,12 +33,12 @@ export class ChaseCam {
 
   private chasePose(r: Rat): { pos: Vec3; target: Vec3 } {
     const f = forwardOf(this.yaw);
-    const dist = lerp(4.9, 3.1, this.aim);
-    const height = lerp(2.5, 1.4, this.aim);
+    const dist = lerp(4.9, 3.6, this.aim);
+    const height = lerp(2.5, 2.3, this.aim);
     const pivot: Vec3 = [r.pos[0], r.pos[1] + 0.9, r.pos[2]];
     let want: Vec3 = [r.pos[0] - f[0] * dist, r.pos[1] + height, r.pos[2] - f[2] * dist];
     want = this.avoid(pivot, want);
-    const ahead = lerp(2.4, 4.2, this.aim);
+    const ahead = lerp(2.4, 3.6, this.aim);
     const target: Vec3 = [r.pos[0] + f[0] * ahead, r.pos[1] + lerp(0.3, 0.05, this.aim), r.pos[2] + f[2] * ahead];
     return { pos: want, target };
   }

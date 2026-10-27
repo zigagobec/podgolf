@@ -354,7 +354,7 @@ html, body {
 .banner .big { font: 4.2rem/1 var(--display); color: var(--pc); -webkit-text-stroke: 2px var(--ink); paint-order: stroke fill; }
 .banner.win { background: var(--cheese); }
 .banner.lose { transform: translate(-50%, -50%) rotate(2deg); }
-.banner.lose .big { color: var(--paper); }
+.banner.lose .big { color: var(--pc); }
 @keyframes drop {
   from { transform: translate(-50%, -160%) rotate(-12deg); }
 }

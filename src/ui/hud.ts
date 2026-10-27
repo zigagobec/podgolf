@@ -44,7 +44,6 @@ export class Hud {
       const meter = el('div', 'meter', root);
       const fill = el('div', 'fill', meter);
       const ghost = el('div', 'ghost', meter);
-      el('div', 'label', meter, 'MOČ');
       const ballMark = el('div', 'mark ball', root, '<i></i>');
       const holeMark = el('div', 'mark hole', root, '<i></i>');
       const banner = el('div', 'banner', root);
